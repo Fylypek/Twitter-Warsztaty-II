@@ -8,12 +8,12 @@
  */
 abstract class Action {
     
-    protected $db;
+//    protected $db;
     
     public function __construct() 
     {
         Session::init();
-        $this->db = new Db();
+//        $this->db = new Db();
     }
     
     public function init()

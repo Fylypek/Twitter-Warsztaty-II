@@ -18,9 +18,11 @@ class indexAction extends Action
         if(!empty(Session::get('sessionId')))
         {
             $sessionId = Session::get('sessionId');
-            $select = $this->db->query("SELECT * FROM users where sessionId='$sessionId'");
-            $users = $select->fetchAll();
+//            $select = $this->db->query("SELECT * FROM users where sessionId='$sessionId'");
+//            $users = $select->fetchAll();
 
+            $users = Users::select("sessionId='$sessionId'");
+            
             if(!empty($users))
             {
                 $baseUrl = Router::$baseUrl;
@@ -33,20 +35,27 @@ class indexAction extends Action
             $login = $_POST['login'];
             $password = $_POST['password'];
 
-            $login = $this->db->quote($login);
+            $login = Record::getDb()->quote($login);
             $password = sha1($password);
 
-            $select = $this->db->query("SELECT * FROM users where login=$login and password='$password'");
-            $users = $select->fetchAll();
+            
+            
+//            $select = $this->db->query("SELECT * FROM users where login=$login and password='$password'");
+            $user = Users::selectOne("login=$login and password='$password'"); //$select->fetchAll();
 
-            if(!empty($users))
+            if(!empty($user))
             {
 
                 $sessionId = sha1(date("YmdHis"));
 
-                $sql = "UPDATE users SET sessionId='$sessionId' where id={$users[0]['id']}";
-                $this->db->query($sql);
-
+//                $sql = "UPDATE users SET sessionId='$sessionId' where id={$users[0]['id']}";
+//                $this->db->query($sql);
+                $user->setSessionId($sessionId);
+                
+//                die(var_dump($user));
+                
+                $user->save();
+                
                 Session::set('sessionId', $sessionId);
 
                 $baseUrl = Router::$baseUrl;

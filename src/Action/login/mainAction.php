@@ -12,8 +12,11 @@ class mainAction extends Action
         if(!empty($_POST['wyloguj']))
         {
             $sessionId = Session::get('sessionId');
-            $sql = "UPDATE users SET sessionId=null where sessionId='$sessionId'";
-            $this->db->query($sql);
+//            $sql = "UPDATE users SET sessionId=null where sessionId='$sessionId'";
+            
+            $user = Users::selectOne("sessionId='$sessionId'");
+//            die(var_dump($user));
+//            $this->db->query($sql);
 
             Session::set('sessionId', null);
 
