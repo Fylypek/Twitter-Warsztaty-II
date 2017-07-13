@@ -106,5 +106,32 @@ class Messages extends Record
             $collection[] = $messageObj; 
         }
         return $collection;
-    }   
+    }
+    
+    public static function selectOne($where)
+    {
+        $sql = "SELECT * FROM messages where $where";
+        $select = Record::getDb()->query($sql);
+        $messages = $select->fetchAll();
+        
+        $collection = [];
+        
+        foreach($messages as $message)
+        {
+            $messageObj = new Messages();
+            $messageObj->setId($message['id'])
+                    ->setAuthorId($message['authorId'])
+                    ->setAuthorName($message['authorName'])
+                    ->setRecipientId($message['recipientId'])
+                    ->setRecipientName($message['recipientName'])
+                    ->setText($message['text'])
+                    ->setCreationDate($message['creationDate'])
+                    ->setStatus($message['status'])
+            ;
+            
+            $collection[] = $messageObj; 
+        }
+        
+        return !empty($collection)?$collection[0]:null;
+    }
 }

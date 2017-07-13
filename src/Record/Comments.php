@@ -88,5 +88,30 @@ class Comments extends Record
             $collection[] = $commentObj; 
         }
         return $collection;
-    }   
+    }
+    
+    public static function selectOne($where)
+    {
+        $sql = "SELECT * FROM comments where $where";
+        $select = Record::getDb()->query($sql);
+        $comments = $select->fetchAll();
+        
+        $collection = [];
+        
+        foreach($comments as $comment)
+        {
+            $commentObj = new Comments();
+            $commentObj->setId($comment['id'])
+                    ->setUserId($comment['userId'])
+                    ->setUserName($comment['userName'])
+                    ->setTweetId($comment['tweetId'])
+                    ->setText($comment['text'])
+                    ->setCreationDate($comment['creationDate'])
+            ;
+            
+            $collection[] = $commentObj; 
+        }
+        
+        return !empty($collection)?$collection[0]:null;
+    }
 }

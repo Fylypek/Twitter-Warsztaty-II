@@ -10,13 +10,22 @@ abstract class Action {
     
 //    protected $db;
     
-    public function __construct() 
+    protected $view;
+
+
+    public function __construct($file) 
     {
         Session::init();
+        $this->view = new View($file);
 //        $this->db = new Db();
     }
     
     public function init()
+    {
+        
+    }
+    
+    public function permission()
     {
         
     }
@@ -35,4 +44,9 @@ abstract class Action {
     {
         
     }    
+    
+    public function render()
+    {
+        require 'src/Action/indexView.php';
+    }
 }

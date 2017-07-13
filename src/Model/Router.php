@@ -15,9 +15,9 @@ class Router {
 
         if (empty($url)) {
             require 'src/Action/indexAction.php';
-            require 'src/Action/indexView.php';
+//            require 'src/Action/indexView.php';
 
-            $action = new indexAction();
+            $action = new indexAction('src/Action/indexView.php');
         } else {
             $array_url = explode("/", $url);
 
@@ -28,24 +28,29 @@ class Router {
 
                 if (is_dir($path)) {
                     $path .= "/";
-                } else {
-                    try {
+                } 
+                else 
+                {
+                    try 
+                    {
                         require $path . 'Action.php';
-                        require $path . 'View.php';
+//                        require $path . 'View.php';
                     } catch (Exception $e) {
                         die(var_dump($e));
                     }
 
                     $actionString = "{$param}Action";
-                    $action = new $actionString();
+                    $action = new $actionString($path . 'View.php');
                 }
             }
         }
 
         $action->init();
+        $action->permission();
         $action->preAction();
         $action->onAction();
         $action->postAction();
+        $action->render();
     }
 
 }

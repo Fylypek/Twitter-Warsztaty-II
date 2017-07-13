@@ -4,7 +4,7 @@ class Tweets extends Record
 {
     private $id;
     private $userId;
-    private $userName;
+//    private $userName;
     private $text;
     private $creationDate;
     
@@ -22,10 +22,9 @@ class Tweets extends Record
     function getUserId() {
         return $this->userId;
     }
-    
-    function getUserName() {
-        return $this->userName;
-    }
+//    function getUserName() {
+//        return $this->userName;
+//    }
     function getText() {
         return $this->text;
     }
@@ -33,6 +32,9 @@ class Tweets extends Record
         return $this->creationDate;
     }
     
+    function setId($id) {
+        $this->id = $id;
+    }    
     function setUserId($userId) {
         $this->userId = $userId;
     }
@@ -45,18 +47,26 @@ class Tweets extends Record
     
     public function save()
     {
-        $id = $this->getId();
-        $userId = $this->getUserId();
-        $userName = $this->getUserName();
-        $text = $this->getText();
-        $creationDate = $this->getCreationDate();
+        $id = empty($this->getId())?'null':Record::getDb()->quote($this->getId());
+        $userId = empty($this->getUserId())?'null':Record::getDb()->quote($this->getUserId());
+        $userName = empty($this->getUserName())?'null':Record::getDb()->quote($this->getUserName());
+        $text = empty($this->getText())?'null':Record::getDb()->quote($this->getText());
+//        $creationDate = empty($this->getCreationDate())?'null':Record::getDb()->quote($this->getCreationDate());
         
-        $sql = "UPDATE Tweets set userId = $userId, userName = $userName,"
-                . " text = $text, creationDate = $creationDate where id = $id";
-        $this->db->query($sql);
+        $tweet = self::selectOne("id = $id");
         
+        if(!empty($tweet))
+        {        
+            $sql = "UPDATE tweets set userId = $userId, userName = $userName, text = $text where id = $id";
+            $this->db->query($sql);
+        } else 
+        {
+            $sql = "INSERT INTO tweets (`userId`,`userName`,`text`) VALUES ($userId,$userName,$text)";
+            $result = Record::getDb()->query($sql);            
+        }
+        
+        return $result;        
     }
-    
     
     public static function select($where)
     {
@@ -79,5 +89,29 @@ class Tweets extends Record
             $collection[] = $tweetObj; 
         }
         return $collection;
-    }   
+    }
+    
+    public static function selectOne($where)
+    {
+        $sql = "SELECT * FROM tweets where $where";
+        $select = Record::getDb()->query($sql);
+        $tweets = $select->fetchAll();
+        
+        $collection = [];
+        
+        foreach($tweets as $tweet)
+        {
+            $tweetObj = new Tweets();
+            $tweetObj->setId($tweet['id'])
+                    ->setUserId($tweet['userId'])
+                    ->setUserName($tweet['userName'])
+                    ->setText($tweet['text'])
+                    ->setCreationDate($tweet['creationDate'])
+            ;
+            
+            $collection[] = $tweetObj; 
+        }
+        
+        return !empty($collection)?$collection[0]:null;
+    }
 }

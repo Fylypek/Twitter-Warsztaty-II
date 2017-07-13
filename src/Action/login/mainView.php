@@ -1,18 +1,8 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
-    <head>
-            <title>Tweeter</title>
-    </head>
-    
-    <body>
-        <h1>Twitter</h1>
-        <h2>Witaj użytkowniku</h2>
+Tweets:
+
+<form action="" method="post">
+    <textarea name='text'>
         
-        
-        <form action="" method="POST">
-            <input type="submit" name="wyloguj" value="Wyloguj">
-        </form>
-        
-    </body>
-</html>
+    </textarea>
+    <input type="submit" value="Wyślij" name='send'/>
+</form>

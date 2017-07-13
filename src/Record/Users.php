@@ -75,15 +75,25 @@ class Users extends Record
     
     public function save()
     {
-        $id = $this->getId();
-        $login = $this->getLogin();
-        $password = $this->getPassword();
-        $email = $this->getEmail();
-        $sessionId = $this->getSessionId();
+        $id = empty($this->getId())?'null':Record::getDb()->quote($this->getId());
+        $login = empty($this->getLogin())?'null':Record::getDb()->quote($this->getLogin());
+        $password = empty($this->getPassword())?'null':Record::getDb()->quote($this->getPassword());
+        $email = empty($this->getEmail())?'null':Record::getDb()->quote($this->getEmail());
+        $sessionId = empty($this->getSessionId())?'null':Record::getDb()->quote($this->getSessionId());
         
-        $sql = "UPDATE Users set login = $login, password = $password, email = $email, sessionId = $sessionId where id = $id";
-        $this->db->query($sql);
+        $user = self::selectOne("id = $id");
         
+        if(!empty($user))
+        {
+            $sql = "UPDATE users set login = $login, password = $password, email = $email, sessionId = $sessionId where id = $id";
+            $result = Record::getDb()->query($sql);
+        } else 
+        {
+            $sql = "INSERT INTO users (`login`,`password`,`email`,`sessionId`) VALUES ($login,$password,$email,$sessionId)";
+            $result = Record::getDb()->query($sql);            
+        }
+        
+        return $result;
     }
     
     

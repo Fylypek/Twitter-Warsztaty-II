@@ -13,13 +13,12 @@
  */
 class indexAction extends Action
 {
-    public function onAction()
+    
+    public function permission()
     {
         if(!empty(Session::get('sessionId')))
         {
             $sessionId = Session::get('sessionId');
-//            $select = $this->db->query("SELECT * FROM users where sessionId='$sessionId'");
-//            $users = $select->fetchAll();
 
             $users = Users::select("sessionId='$sessionId'");
             
@@ -28,8 +27,11 @@ class indexAction extends Action
                 $baseUrl = Router::$baseUrl;
                 header("Location: {$baseUrl}/login/main");
             }
-        }
-
+        }        
+    }
+    
+    public function onAction()
+    {
         if(!empty($_POST['zaloguj']))
         {
             $login = $_POST['login'];
@@ -38,21 +40,14 @@ class indexAction extends Action
             $login = Record::getDb()->quote($login);
             $password = sha1($password);
 
-            
-            
-//            $select = $this->db->query("SELECT * FROM users where login=$login and password='$password'");
             $user = Users::selectOne("login=$login and password='$password'"); //$select->fetchAll();
-
+            
             if(!empty($user))
             {
 
                 $sessionId = sha1(date("YmdHis"));
 
-//                $sql = "UPDATE users SET sessionId='$sessionId' where id={$users[0]['id']}";
-//                $this->db->query($sql);
                 $user->setSessionId($sessionId);
-                
-//                die(var_dump($user));
                 
                 $user->save();
                 
@@ -61,15 +56,21 @@ class indexAction extends Action
                 $baseUrl = Router::$baseUrl;
                 header("Location: {$baseUrl}/login/main");
             }
-            else {
+            else 
+            {
                 echo "Błędne hasło<br>";
             }
-
         }      
 
         if(!empty($_POST['zarejestruj']))
         {
-            die(var_dump('zarejestruj', $_POST));
+            $user = new Users();
+            
+            $user->setEmail("test@test123.pl");
+            $user->setLogin("test00");
+            $user->setPassword("hasło");
+            
+            $user->save();
         }        
     }
 }
