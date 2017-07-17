@@ -13,6 +13,8 @@
  */
 abstract class ActionLogin extends Action
 { 
+    protected $user;
+    
     public function permission()
     {
         if(empty(Session::get('sessionId')))
@@ -24,13 +26,15 @@ abstract class ActionLogin extends Action
         {
             $sessionId = Session::get('sessionId');
 
-            $users = Users::select("sessionId='$sessionId'");
+            $user = Users::selectOne("sessionId='$sessionId'");
             
-            if(empty($users))
+            if(empty($user))
             {
                 $baseUrl = Router::$baseUrl;
                 header("Location: {$baseUrl}/");
             }
+           
+            $this->user = $user;
         }        
     }
     

@@ -29,11 +29,13 @@
             <form action="" method="POST">
                 <input name="login" type="text" placeholder="Login"/>
                 <input name="password" type="password" placeholder="Hasło"/>
-                <input name="imie" type="text" placeholder="Imię"/>
-                <input name="nazwisko" type="text" placeholder="Nazwisko"/>
                 <input name="email" type="email" placeholder="E-mail"/>
                 <input type="submit" name="zarejestruj" value="Zarejestruj"/>
             </form>            
+        </div>
+        
+        <div>
+            <?php if(!empty($this->view->message)){ echo $this->view->message; }?>
         </div>
     </body>
 </html>

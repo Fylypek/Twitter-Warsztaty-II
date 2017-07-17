@@ -9,9 +9,27 @@ class mainAction extends ActionLogin
 {
     public function onAction() 
     {
-        if(!empty($_POST['send']))
+        $limit = 5;
+        if(!empty($_POST['moreTweets']))
         {
-            die(var_dump($_POST));
+            $limit = $_POST['limit'] + 5;    
+        } 
+        
+        $tweets = Tweets::select(null,'creationDate DESC', $limit);
+        
+        foreach($tweets as $tweet)
+        {
+            $tweet->author = Users::selectOne("id = {$tweet->getUserId()}");
         }
+        
+        $this->view->limit = $limit;
+        $this->view->tweets = $tweets;
+        
+        if(!empty($_POST['comment']))
+        {
+            $this->view->comment = true;
+        }
+        
+        
     }
 }

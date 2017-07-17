@@ -11,45 +11,49 @@ class Tweets extends Record
     public function __construct() {
         $this->id = -1;
         $this->userId = "";
-        $this->userName = "";
+//        $this->userName = "";
         $this->text = "";
         $this->creationDate = "";
     }
     
-    function getId() {
+    public function getId() {
         return $this->id;
     }
-    function getUserId() {
+    public function getUserId() {
         return $this->userId;
     }
 //    function getUserName() {
 //        return $this->userName;
 //    }
-    function getText() {
+    public function getText() {
         return $this->text;
     }
-    function getCreationDate() {
+    public function getCreationDate() {
         return $this->creationDate;
     }
     
-    function setId($id) {
+    public function setId($id) {
         $this->id = $id;
+        return $this;
     }    
-    function setUserId($userId) {
+    public function setUserId($userId) {
         $this->userId = $userId;
+        return $this;
     }
-    function setText($text) {
+    public function setText($text) {
         $this->text = $text;
+        return $this;
     }
-    function setCreationDate($creationDate) {
+    public function setCreationDate($creationDate) {
         $this->creationDate = $creationDate;
+        return $this;
     }
     
     public function save()
     {
         $id = empty($this->getId())?'null':Record::getDb()->quote($this->getId());
         $userId = empty($this->getUserId())?'null':Record::getDb()->quote($this->getUserId());
-        $userName = empty($this->getUserName())?'null':Record::getDb()->quote($this->getUserName());
+//        $userName = empty($this->getUserName())?'null':Record::getDb()->quote($this->getUserName());
         $text = empty($this->getText())?'null':Record::getDb()->quote($this->getText());
 //        $creationDate = empty($this->getCreationDate())?'null':Record::getDb()->quote($this->getCreationDate());
         
@@ -57,20 +61,38 @@ class Tweets extends Record
         
         if(!empty($tweet))
         {        
-            $sql = "UPDATE tweets set userId = $userId, userName = $userName, text = $text where id = $id";
+            $sql = "UPDATE tweets set userId = $userId, text = $text where id = $id";
             $this->db->query($sql);
         } else 
         {
-            $sql = "INSERT INTO tweets (`userId`,`userName`,`text`) VALUES ($userId,$userName,$text)";
+            $sql = "INSERT INTO tweets (`userId`,`text`) VALUES ($userId,$text)";
             $result = Record::getDb()->query($sql);            
         }
         
         return $result;        
     }
     
-    public static function select($where)
+    public static function select($where = null, $order= null, $limit = null)
     {
-        $sql = "SELECT * FROM tweets where $where";
+        if(empty($where))
+        {
+            $sql = "SELECT * FROM tweets";
+        }
+        else{
+            $sql = "SELECT * FROM tweets where $where";
+        }
+        
+        
+        if(!empty($order))
+        {
+            $sql .= " ORDER BY $order";
+        }
+        
+        if(!empty($limit))
+        {
+            $sql .= " LIMIT $limit";
+        }
+        
         $select = Record::getDb()->query($sql);
         $tweets = $select->fetchAll();
         
@@ -78,14 +100,16 @@ class Tweets extends Record
         
         foreach($tweets as $tweet)
         {
+//            die(var_dump($tweet));
             $tweetObj = new Tweets();
+//            var_dump($tweetObj);
             $tweetObj->setId($tweet['id'])
                     ->setUserId($tweet['userId'])
-                    ->setUserName($tweet['userName'])
+//                    ->setUserName($tweet['userName'])
                     ->setText($tweet['text'])
                     ->setCreationDate($tweet['creationDate'])
             ;
-            
+//            die(var_dump($tweetObj));
             $collection[] = $tweetObj; 
         }
         return $collection;
@@ -104,7 +128,7 @@ class Tweets extends Record
             $tweetObj = new Tweets();
             $tweetObj->setId($tweet['id'])
                     ->setUserId($tweet['userId'])
-                    ->setUserName($tweet['userName'])
+//                    ->setUserName($tweet['userName'])
                     ->setText($tweet['text'])
                     ->setCreationDate($tweet['creationDate'])
             ;

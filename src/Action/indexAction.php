@@ -58,19 +58,25 @@ class indexAction extends Action
             }
             else 
             {
-                echo "Błędne hasło<br>";
+                $this->view->message = "Błędne hasło";
             }
         }      
 
         if(!empty($_POST['zarejestruj']))
         {
+            $login = $_POST['login'];
+            $email = $_POST['email'];
+            $password = $_POST['password'];
+            
             $user = new Users();
             
-            $user->setEmail("test@test123.pl");
-            $user->setLogin("test00");
-            $user->setPassword("hasło");
+            $user->setEmail($email);
+            $user->setLogin($login);
+            $user->setPassword(sha1($password));
             
             $user->save();
+            
+            $this->view->message = "Zarejestrowano";
         }        
     }
 }

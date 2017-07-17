@@ -13,6 +13,7 @@ require 'src/Model/View.php';
 
 
 require 'src/Record/Users.php';
+require 'src/Record/Tweets.php';
 
 $url = $_SERVER['PHP_SELF'];
 
