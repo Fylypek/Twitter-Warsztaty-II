@@ -14,6 +14,8 @@ require 'src/Model/View.php';
 
 require 'src/Record/Users.php';
 require 'src/Record/Tweets.php';
+require 'src/Record/Comments.php';
+require 'src/Record/Messages.php';
 
 $url = $_SERVER['PHP_SELF'];
 

@@ -53,9 +53,7 @@ class Tweets extends Record
     {
         $id = empty($this->getId())?'null':Record::getDb()->quote($this->getId());
         $userId = empty($this->getUserId())?'null':Record::getDb()->quote($this->getUserId());
-//        $userName = empty($this->getUserName())?'null':Record::getDb()->quote($this->getUserName());
         $text = empty($this->getText())?'null':Record::getDb()->quote($this->getText());
-//        $creationDate = empty($this->getCreationDate())?'null':Record::getDb()->quote($this->getCreationDate());
         
         $tweet = self::selectOne("id = $id");
         
@@ -100,18 +98,15 @@ class Tweets extends Record
         
         foreach($tweets as $tweet)
         {
-//            die(var_dump($tweet));
             $tweetObj = new Tweets();
-//            var_dump($tweetObj);
             $tweetObj->setId($tweet['id'])
                     ->setUserId($tweet['userId'])
-//                    ->setUserName($tweet['userName'])
                     ->setText($tweet['text'])
                     ->setCreationDate($tweet['creationDate'])
             ;
-//            die(var_dump($tweetObj));
             $collection[] = $tweetObj; 
         }
+        
         return $collection;
     }
     

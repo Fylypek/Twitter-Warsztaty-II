@@ -30,15 +30,15 @@ abstract class Action {
         
     }
     
-    public function onAction()
-    {
-        
-    }  
-    
     public function preAction()
     {
         
     }   
+    
+    public function onAction()
+    {
+        
+    }  
     
     public function postAction()
     {
@@ -48,5 +48,6 @@ abstract class Action {
     public function render()
     {
         require 'src/Action/indexView.php';
+//        require 'src/Action/indexJs.js';
     }
 }

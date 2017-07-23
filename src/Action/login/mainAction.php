@@ -9,6 +9,12 @@ class mainAction extends ActionLogin
 {
     public function onAction() 
     {
+        if(!empty($_POST['hidden']))
+        {
+            Session::set('showComments', null);
+            Session::set('tweetId', null);
+        }
+        
         $limit = 5;
         if(!empty($_POST['moreTweets']))
         {
@@ -27,9 +33,15 @@ class mainAction extends ActionLogin
         
         if(!empty($_POST['comment']))
         {
-            $this->view->comment = true;
+            Session::set('showComments', true);
+            Session::set('tweetId', $_POST['tweetId']);
+
         }
-        
+        if(Session::get('showComments'))
+        {
+            $this->view->tweetId = Session::get('tweetId');
+            $this->view->comments = Comments::select("tweetId = ". Record::getDb()->quote(Session::get('tweetId')));
+        }
         
     }
 }

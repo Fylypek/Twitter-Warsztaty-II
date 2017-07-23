@@ -73,7 +73,7 @@ class Users extends Record
         return $this;
     }  
     
-    public function save()
+    public function save($validuj = true, $validArrayColumn = null, $validArrayFunction = null)
     {
         $id = empty($this->getId())?'null':Record::getDb()->quote($this->getId());
         $login = empty($this->getLogin())?'null':Record::getDb()->quote($this->getLogin());
@@ -83,19 +83,31 @@ class Users extends Record
         
         $user = self::selectOne("id = $id");
         
-        if(!empty($user))
-        {
-            $sql = "UPDATE users set login = $login, password = $password, email = $email, sessionId = $sessionId where id = $id";
-            $result = Record::getDb()->query($sql);
-        } else 
-        {
-            $sql = "INSERT INTO users (`login`,`password`,`email`,`sessionId`) VALUES ($login,$password,$email,$sessionId)";
-            $result = Record::getDb()->query($sql);            
-        }
+//        $error = $this->validacion($validuj,$validArrayColumn,$validArrayFunction);
+//        if(empty($error)){
+            if(!empty($user))
+            {
+                $sql = "UPDATE users set login = $login, password = $password, email = $email, sessionId = $sessionId where id = $id";
+                $result = Record::getDb()->query($sql);
+            } else 
+            {
+                $sql = "INSERT INTO users (`login`,`password`,`email`,`sessionId`) VALUES ($login,$password,$email,$sessionId)";
+                $result = Record::getDb()->query($sql);            
+            }
+//        }
+//        $error = [];
+//        $result = ['result' => $result, 'error' => $error];
         
         return $result;
     }
     
+//    public function validacion($validuj = true, $validArrayColumn = null, $validArrayFunction = null)
+//    {
+//        if(!$validuj){
+//            return [];
+//        }
+//        
+//    }
     
     public static function select($where)
     {

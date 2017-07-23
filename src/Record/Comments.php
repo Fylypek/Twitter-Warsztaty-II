@@ -4,7 +4,6 @@ class Comments extends Record
 {
     private $id;
     private $userId;
-    private $userName;
     private $tweetId;
     private $text;
     private $creationDate;
@@ -12,57 +11,79 @@ class Comments extends Record
     public function __construct() {
         $this->id = -1;
         $this->userId = "";
-        $this->userName = "";
         $this->tweetId = "";
         $this->text = "";
         $this->creationDate = "";
     }
     
-    function getId() {
+    public function getId() {
         return $this->id;
     }
-    function getUserId() {
+    public function getUserId() {
         return $this->userId;
     }
-    function getUserName() {
-        return $this->userName;
-    }
-    function getTweetId() {
+    public function getTweetId() {
         return $this->tweetId;
     }
-    function getText() {
+    public function getText() {
         return $this->text;
     }
-    function getCreationDate() {
+    public function getCreationDate() {
         return $this->creationDate;
     }
     
-    function setUserId($userId) {
+    public function setId($id) {
+        $this->id = $id;
+        return $this;
+    }
+    public function setUserId($userId) {
         $this->userId = $userId;
+        return $this;
     }
-    function setTweetId($tweetId) {
+    public function setTweetId($tweetId) {
         $this->tweetId = $tweetId;
+        return $this;
     }
-    function setText($text) {
+    public function setText($text) {
         $this->text = $text;
+        return $this;
     }
-    function setCreationDate($creationDate) {
+    public function setCreationDate($creationDate) {
         $this->creationDate = $creationDate;
+        return $this;
     }
     
     public function save()
     {
-        $id = $this->getId();
-        $userId = $this->getUserId();
-        $userName = $this->getUserName();
-        $tweetId = $this->getTweetId();
-        $text = $this->getText();
-        $creationDate = $this->getCreationDate();
+//        $id = $this->getId();
+//        $userId = $this->getUserId();
+//        $tweetId = $this->getTweetId();
+//        $text = $this->getText();
+//        $creationDate = $this->getCreationDate();
         
-        $sql = "UPDATE Comments set userId = $userId, userName = $userName,"
-                . " tweetId = $tweetId, text = $text, creationDate = $creationDate where id = $id";
-        $this->db->query($sql);
+//        $sql = "UPDATE Comments set userId = $userId, userName = $userName,"
+//                . " tweetId = $tweetId, text = $text, creationDate = $creationDate where id = $id";
+//        $this->db->query($sql);
         
+        
+        $id = empty($this->getId())?'null':Record::getDb()->quote($this->getId());
+        $userId = empty($this->getUserId())?'null':Record::getDb()->quote($this->getUserId());
+        $tweetId = empty($this->getTweetId())?'null':Record::getDb()->quote($this->getTweetId());
+        $text = empty($this->getText())?'null':Record::getDb()->quote($this->getText());
+        
+        $comment = self::selectOne("id = $id");
+        
+        if(!empty($comment))
+        {        
+            $sql = "UPDATE comments set userId = $userId, tweetId = $tweetId, text = $text where id = $id";
+            $this->db->query($sql);
+        } else 
+        {
+            $sql = "INSERT INTO comments (`userId`,`tweetId`,`text`) VALUES ($userId,$tweetId,$text)";
+            $result = Record::getDb()->query($sql);            
+        }
+        
+        return $result;
     }
     
     
@@ -79,7 +100,6 @@ class Comments extends Record
             $commentObj = new Comments();
             $commentObj->setId($comment['id'])
                     ->setUserId($comment['userId'])
-                    ->setUserName($comment['userName'])
                     ->setTweetId($comment['tweetId'])
                     ->setText($comment['text'])
                     ->setCreationDate($comment['creationDate'])
@@ -89,7 +109,7 @@ class Comments extends Record
         }
         return $collection;
     }
-    
+
     public static function selectOne($where)
     {
         $sql = "SELECT * FROM comments where $where";
@@ -103,7 +123,6 @@ class Comments extends Record
             $commentObj = new Comments();
             $commentObj->setId($comment['id'])
                     ->setUserId($comment['userId'])
-                    ->setUserName($comment['userName'])
                     ->setTweetId($comment['tweetId'])
                     ->setText($comment['text'])
                     ->setCreationDate($comment['creationDate'])

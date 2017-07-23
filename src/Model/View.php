@@ -27,5 +27,8 @@ class View
         require 'src/Action/layout/menu.php';
         require $this->file;
         require 'src/Action/layout/footer.php';
+        
+        
+//        require $this->file;
     }
 }

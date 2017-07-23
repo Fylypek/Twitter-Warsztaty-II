@@ -10,7 +10,6 @@ class Router {
     public static $baseUrl = "http://localhost/Twitter-Warsztaty-II/index.php";
     
     public function __construct($url) {
-
         $url = substr($url, 32);
 
         if (empty($url)) {
@@ -19,8 +18,8 @@ class Router {
 
             $action = new indexAction('src/Action/indexView.php');
         } else {
+            
             $array_url = explode("/", $url);
-
             $path = 'src/Action/';
 
             foreach ($array_url as $param) {
