@@ -10,4 +10,7 @@ Menu:
     <li>
         <a href="<?php echo Router::$baseUrl ?>/login/profile"> Profil użytkownika </a>
     </li>
+    <li>
+        <a href="<?php echo Router::$baseUrl ?>/login/message"> Wiadomości </a>
+    </li>    
 </ul>

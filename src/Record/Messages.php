@@ -5,9 +5,7 @@ class Messages extends Record
 {
     private $id;
     private $authorId;
-    private $authorName;
     private $recipientId;
-    private $recipientName;
     private $text;
     private $creationDate;
     private $status;
@@ -15,76 +13,114 @@ class Messages extends Record
     public function __construct() {
         $this->id = -1;
         $this->authorId = "";
-        $this->authorName = "";
         $this->recipientId = "";
-        $this->recipientName = "";
         $this->text = "";
         $this->creationDate = "";
         $this->status = 0;
     }
     
-    function getId() {
+    public function getId() {
         return $this->id;
     }
-    function getAuthorId() {
+    public function getAuthorId() {
         return $this->authorId;
     }
-    function getAuthorName() {
-        return $this->authorName;
-    }
-    function getRecipientId() {
+    public function getRecipientId() {
         return $this->recipientId;
     }
-    
-    function getRecipientName() {
-        return $this->recipientName;
-    }
-    function getText() {
+    public function getText() {
         return $this->text;
     }
-    function getCreationDate() {
+    public function getCreationDate() {
         return $this->creationDate;
     }
-    function getStatus() {
+    public function getStatus() {
         return $this->status;
     }
     
-    function setAuthorId($authorId) {
+    public function setId($id) {
+        $this->id = $id;
+        return $this;
+    }
+    public function setAuthorId($authorId) {
         $this->authorId = $authorId;
+        return $this;
     }
-    function setRecipientId($recipientId) {
+    public function setRecipientId($recipientId) {
         $this->recipientId = $recipientId;
+        return $this;
     }
-    function setText($text) {
+    public function setText($text) {
         $this->text = $text;
+        return $this;
     }
-    function setCreationDate($creationDate) {
+    public function setCreationDate($creationDate) {
         $this->creationDate = $creationDate;
+        return $this;
     }
-    function setStatus($status) {
+    public function setStatus($status) {
         $this->status = $status;
+        return $this;
     }
     
     public function save()
     {
-        $id = $this->getId();
-        $authorId = $this->getAuthorId();
-        $authorName = $this->getAuthorName();
-        $recipientId = $this->getRecipientId();
-        $recipientName = $this->getRecipientName();
-        $text = $this->getText();
-        $creationDate = $this->getCreationDate();
-        $status = $this->getStatus();
+//        $id = $this->getId();
+//        $authorId = $this->getAuthorId();
+//        $recipientId = $this->getRecipientId();
+//        $text = $this->getText();
+//        $creationDate = $this->getCreationDate();
+//        $status = $this->getStatus();
+//        
+//        $sql = "UPDATE messages set authorId = $authorId, authorName = $authorName, recipientId = $recipientId,"
+//                . " recipientName = $recipientName, text = $text, creationDate = $creationDate, status = $status where id = $id";
+//        $this->db->query($sql);
         
-        $sql = "UPDATE Messages set authorId = $authorId, authorName = $authorName, recipientId = $recipientId,"
-                . " recipientName = $recipientName, text = $text, creationDate = $creationDate, status = $status where id = $id";
-        $this->db->query($sql);
+        
+        
+        $id = empty($this->getId())?'null':Record::getDb()->quote($this->getId());
+        $authorId = empty($this->getAuthorId())?'null':Record::getDb()->quote($this->getAuthorId());
+        $recipientId = empty($this->getRecipientId())?'null':Record::getDb()->quote($this->getRecipientId());
+        $text = empty($this->getText())?'null':Record::getDb()->quote($this->getText());
+        $status = empty($this->getStatus())?'null':Record::getDb()->quote($this->getStatus());
+        
+        $message = self::selectOne("id = $id");
+        
+        if(!empty($message))
+        {        
+            $sql = "UPDATE messages set authorId = $authorId, recipientId = $recipientId, text = $text, status = $status where id = $id";
+            $result = Record::getDb()->query($sql);
+        } else 
+        {
+            $sql = "INSERT INTO messages (`authorId`,`recipientId`,`text`,`status`) VALUES ($authorId,$recipientId,$text,$status)";
+            $result = Record::getDb()->query($sql);            
+        }
+        
+        return $result;
         
     }
     
-    public static function select($where)
+    public static function select($where = null, $order= null, $limit = null)
     {
-        $sql = "SELECT * FROM messages where $where";
+        if(empty($where))
+        {
+            $sql = "SELECT * FROM messages";
+        }
+        else{
+            $sql = "SELECT * FROM messages where $where";
+        }
+        
+        
+        if(!empty($order))
+        {
+            $sql .= " ORDER BY $order";
+        }
+        
+        if(!empty($limit))
+        {
+            $sql .= " LIMIT $limit";
+        }
+//        die($sql);
         $select = Record::getDb()->query($sql);
         $messages = $select->fetchAll();
         
@@ -95,9 +131,7 @@ class Messages extends Record
             $messageObj = new Messages();
             $messageObj->setId($message['id'])
                     ->setAuthorId($message['authorId'])
-                    ->setAuthorName($message['authorName'])
                     ->setRecipientId($message['recipientId'])
-                    ->setRecipientName($message['recipientName'])
                     ->setText($message['text'])
                     ->setCreationDate($message['creationDate'])
                     ->setStatus($message['status'])
@@ -108,9 +142,27 @@ class Messages extends Record
         return $collection;
     }
     
-    public static function selectOne($where)
+    public static function selectOne($where = null, $order= null, $limit = null)
     {
-        $sql = "SELECT * FROM messages where $where";
+        if(empty($where))
+        {
+            $sql = "SELECT * FROM messages";
+        }
+        else{
+            $sql = "SELECT * FROM messages where $where";
+        }
+        
+        
+        if(!empty($order))
+        {
+            $sql .= " ORDER BY $order";
+        }
+        
+        if(!empty($limit))
+        {
+            $sql .= " LIMIT $limit";
+        }
+        
         $select = Record::getDb()->query($sql);
         $messages = $select->fetchAll();
         
@@ -121,9 +173,7 @@ class Messages extends Record
             $messageObj = new Messages();
             $messageObj->setId($message['id'])
                     ->setAuthorId($message['authorId'])
-                    ->setAuthorName($message['authorName'])
                     ->setRecipientId($message['recipientId'])
-                    ->setRecipientName($message['recipientName'])
                     ->setText($message['text'])
                     ->setCreationDate($message['creationDate'])
                     ->setStatus($message['status'])

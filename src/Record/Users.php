@@ -109,9 +109,26 @@ class Users extends Record
 //        
 //    }
     
-    public static function select($where)
+    public static function select($where = null, $order= null, $limit = null)
     {
-        $sql = "SELECT * FROM users where $where";
+        if(empty($where))
+        {
+            $sql = "SELECT * FROM users";
+        }
+        else{
+            $sql = "SELECT * FROM users where $where";
+        }
+        
+        if(!empty($order))
+        {
+            $sql .= " ORDER BY $order";
+        }
+        
+        if(!empty($limit))
+        {
+            $sql .= " LIMIT $limit";
+        }
+        
         $select = Record::getDb()->query($sql);
         $users = $select->fetchAll();
         
